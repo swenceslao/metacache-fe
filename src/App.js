@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import MainContainer from './components/Common/index';
 
 // lazy load pages
@@ -15,6 +15,9 @@ function App() {
         <Router>
           <MainContainer>
             <Switch>
+              <Route exact path='/'>
+                <Redirect to='/dashboard' />
+              </Route>
               <Route 
                 exact path='/dashboard' 
                 render={() => <div>Homepage</div>} 
