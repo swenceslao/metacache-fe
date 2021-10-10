@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from 'react';
+import CssBaseline from '@mui/material/CssBaseline';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import MainContainer from './components/Common/index';
+
+// lazy load pages
+const AxieTracker = React.lazy(() => import('./components/Tracker/Games/AxieInfinity/index'));
+
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <CssBaseline />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Router>
+          <MainContainer>
+            <Switch>
+              <Route 
+                exact path='/dashboard' 
+                render={() => <div>Homepage</div>} 
+              />
+              <Route 
+                exact path='/axieinfinity' 
+                render={() => <AxieTracker/>} 
+              />
+              <Route path='*' render={() => <div>404 not found</div>} />
+            </Switch>
+          </MainContainer>
+        </Router>
+      </Suspense>
     </div>
   );
-}
+};
 
 export default App;
