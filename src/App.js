@@ -8,6 +8,7 @@ const AxieTracker = React.lazy(() => import('./components/Tracker/Games/AxieInfi
 
 
 function App() {
+
   return (
     <div className="App">
       <CssBaseline />
