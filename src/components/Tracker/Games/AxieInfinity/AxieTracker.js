@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
-import { DateRangePicker } from 'react-date-range';
+import { DefinedRange } from 'react-date-range';
 import { Line } from 'react-chartjs-2';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -19,6 +19,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
+import Divider from '@mui/material/Divider';
+import moment from 'moment';
 
 import SLPImage from '../../../../assets/icons/SLP.png';
 import GridContainer from './GridContainer';
@@ -48,12 +50,6 @@ const options = {
   },
 };
 
-const dateSelectionRange = {
-  startDate: new Date(),
-  endDate: new Date(),
-  key: 'selection',
-};
-
 const earningsHeaders = [
   'Range', 'SLP', 'Gain %'
 ];
@@ -64,11 +60,22 @@ const earningsRows = [
   ['7 days', 1840, '77%'],
 ];
 
+const timeframeSelection = [
+  'daily', 'weekly', 'biweekly', 'monthly', 'bimonthly', 'quarterly', 'semiannually', 'annually',
+];
+
 const AxieTracker = () => {
   let theme = createTheme();
   theme = responsiveFontSizes(theme);
 
   const [showDatepicker, setShowDatepicker] = useState(false);
+  const [buttonSelectedTimeframe, setButtonSelectedTimeframe] = useState('daily');
+  const [selectedTimeframe, setSelectedTimeframe] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+    key: 'selection',
+    autoFocus: true,
+  });
 
   const handleSelect = (date) => {
     console.log(date); // native Date object
@@ -103,7 +110,48 @@ const AxieTracker = () => {
     </Box>
   );
 
+  const dateRangeButtonPicker = () => {
+    return (
+      <Box>
+        <Tooltip title='Select time frame'>
+          <Button 
+            size='small' 
+            variant='outlined' 
+            startIcon={<CalendarTodayTwoToneIcon />}
+            onClick={() => setShowDatepicker(!showDatepicker)}
+          >
+            Daily
+          </Button>
+        </Tooltip>
+      </Box>
+    );
+  };
+
+  const renderDateRangePicker = () => {
+    return (
+      <Box sx={{ marginBottom: 4, }} display={ !showDatepicker ? 'none' : 'block' }>
+        <DefinedRange
+          ranges={[selectedTimeframe]}
+          onChange={date => {
+            const { selection } = date;
+            setSelectedTimeframe(selection);
+          }}
+        />
+      </Box>
+    );
+  };
+
+  useEffect(() => {
+    const startMoment = moment(selectedTimeframe.startDate);
+    const endMoment = moment(selectedTimeframe.endDate);
+    const duration = moment.duration(endMoment.diff(startMoment)).humanize(true);
+    console.log(duration);
+  }, [selectedTimeframe]);
+
   return (
+    <>
+      {dateRangeButtonPicker()}
+      {renderDateRangePicker()}
       <GridContainer>
         <Grid item xs={12} md={6} lg={4}>
           <Card>
@@ -113,7 +161,7 @@ const AxieTracker = () => {
                 marginBottom: 1,
               }}>
                 <Typography variant='h6' component='h6'>
-                  Total SLP Balance
+                  Total SLP Earnings
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', }}>
                   <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
@@ -122,36 +170,30 @@ const AxieTracker = () => {
                   </Typography>
                 </Box>
               </Box>
-              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', marginBottom: 4 }}>
+              <Divider />
+              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
                 <Typography variant='overline' lineHeight='1.8'>
                   Today's gains
                 </Typography>
-                <Box sx={{ display: 'flex', color: '#4e8872' }}>
-                  <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
-                  <Typography mr='4px'>
-                    22%
-                  </Typography>
-                  <Typography>
-                    / + SLP 514
-                  </Typography>
+                <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
+                  <Box  sx={{ display: 'flex', color: '#4e8872' }}>
+                    <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
+                    <Typography mr='4px'>
+                      22%
+                    </Typography>
+                    <Typography>
+                      / + SLP 514
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
               <Line data={data} options={options} />
-              {/* <Tooltip title='Select date range'>
-                <Button size='small' variant='outlined' startIcon={<CalendarTodayTwoToneIcon />}>
-                  Daily
-                </Button>
-              </Tooltip> */}
+              
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} display='none'>
-          <DateRangePicker
-            ranges={[dateSelectionRange]}
-            onChange={handleSelect}
-          />
-        </Grid>
       </GridContainer>
+    </>
   );
 };
 
