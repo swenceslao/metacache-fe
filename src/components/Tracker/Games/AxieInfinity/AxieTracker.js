@@ -21,6 +21,7 @@ import TableRow from '@mui/material/TableRow';
 import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
 import moment from 'moment';
+import { DataTable } from '../../utils';
 
 import SLPImage from '../../../../assets/icons/SLP.png';
 import GridContainer from './GridContainer';
@@ -193,6 +194,9 @@ const AxieTracker = () => {
           </Card>
         </Grid>
       </GridContainer>
+      <Box my={4}>
+        <DataTable />
+      </Box>
     </>
   );
 };
