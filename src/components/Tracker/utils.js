@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+import Box from '@mui/material/Box';
 import { v4 as uuid } from 'uuid';
 
 const columns = [
@@ -51,13 +52,13 @@ const rows = [
 
 export function DataTable() {
   return (
-    <div style={{ height: 400, width: '100%' }}>
+    <Box width='100%' height='400px'>
       <DataGrid
         rows={rows}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[10]}
       />
-    </div>
+    </Box>
   );
 }

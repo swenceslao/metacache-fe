@@ -7,7 +7,7 @@ import NavBar from './NavBar';
 const MainContainer = ({ children }) => {
   return (
     <Box sx={{ display: 'flex' }}>
-      <NavBar/>
+      <NavBar />
       <Box component='main' sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {children}
