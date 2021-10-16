@@ -1,19 +1,21 @@
 import { useState } from 'react';
-import Box from '@mui/material/Box';
-import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+
+
 import { v4 as uuid } from 'uuid';
 
 const columns = [
-  { field: 'name', headerName: 'Name', width: 165 },
-  { field: 'ign', headerName: 'IGN', width: 135 },
-  { field: 'today', headerName: 'SLP today', width: 150, type: 'number', },
-  { field: 'yesterday', headerName: 'SLP yesterday', width: 170, type: 'number', },
-  { field: 'mmr', headerName: 'MMR', width: 110, type: 'number', },
-  { field: 'hoursTilClaim', headerName: 'Hours till claim', width: 180 },
-  { field: 'scholarCut', headerName: 'Scholar cut', width: 150, type: 'number', },
-  { field: 'managerCut', headerName: 'Manager cut', width: 160, type: 'number', },
+  { field: 'name', headerName: 'Name', editable: true, },
+  { field: 'ign', headerName: 'IGN', editable: true, },
+  { field: 'today', headerName: 'SLP today', type: 'numberColumn', },
+  { field: 'yesterday', headerName: 'SLP yesterday', type: 'numberColumn', },
+  { field: 'mmr', headerName: 'MMR', type: 'numberColumn', },
+  { field: 'hoursTilClaim', headerName: 'Hours till claim', },
+  { field: 'scholarCut', headerName: 'Scholar cut', type: 'numberColumn', },
+  { field: 'managerCut', headerName: 'Manager cut', type: 'numberColumn', },
 ];
 
 const rowData = [
@@ -52,7 +54,15 @@ const rowData = [
   },
 ];
 
+
 export const DataTable = () => {
+  const theme = useTheme();
+  if (theme.palette.mode === 'light') {
+    import('ag-grid-community/dist/styles/ag-theme-alpine.css');  
+  } else {
+    import('ag-grid-community/dist/styles/ag-theme-alpine-dark.css');  
+  }
+
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
 
@@ -65,14 +75,19 @@ export const DataTable = () => {
     params.api.sizeColumnsToFit();
   };
 
+  // const 
+
   return (
-    <Box className='ag-theme-alpine' width='100%'>
+    <Box 
+      className={theme.palette.mode === 'light' ? 'ag-theme-alpine' : 'ag-theme-alpine-dark'}
+      width='100%'
+    >
       <AgGridReact 
         domLayout='autoHeight'
         rowData={rowData} 
         onGridReady={onGridReady} 
         onFirstDataRendered={onFirstDataRendered}>
-        {columns.map(({ field, headerName }, index) => (
+        {columns.map(({ field, headerName, ...rest }, index) => (
           <AgGridColumn 
             key={index} 
             field={field} 
@@ -80,6 +95,8 @@ export const DataTable = () => {
             sortable 
             filter
             resizable
+            minWidth='150'
+            {...rest}
           />
         ))}
       </AgGridReact>

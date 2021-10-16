@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { DefinedRange, defaultStaticRanges } from 'react-date-range';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import TrendingUpTwoToneIcon from '@mui/icons-material/TrendingUpTwoTone';
@@ -15,7 +15,6 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -50,6 +49,27 @@ const options = {
   },
 };
 
+const topScholarsData = {
+  labels: ['Namey 1', 'Namey 2', 'Namey 3'],
+  datasets: [
+    {
+      label: 'Scholar performance',
+      data: [251, 213, 197,],
+      fill: false,
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+      ],
+    },
+  ],
+};
+
 const earningsHeaders = [
   'Range', 'SLP', 'Gain %'
 ];
@@ -61,9 +81,6 @@ const earningsRows = [
 ];
 
 const AxieTracker = () => {
-  let theme = createTheme();
-  theme = responsiveFontSizes(theme);
-
   const [showDatepicker, setShowDatepicker] = useState(false);
   const [buttonSelectedTimeframe, setButtonSelectedTimeframe] = useState('Daily');
   const [selectedTimeframe, setSelectedTimeframe] = useState({
@@ -159,7 +176,7 @@ const AxieTracker = () => {
           </Box>
         </Box>
         <GridContainer>
-          <PrimaryGridCard>
+          <PrimaryGridCard id='total-slp-earnings'>
             <Box sx={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               marginBottom: 1,
@@ -193,7 +210,7 @@ const AxieTracker = () => {
             </Box>
             <Line data={data} options={options} />
           </PrimaryGridCard>
-          <SecondaryGridCard>
+          <SecondaryGridCard id='manager-slp-earnings'>
             <Box sx={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               marginBottom: 1,
@@ -227,7 +244,7 @@ const AxieTracker = () => {
             </Box>
             <Line data={data} options={options} />
           </SecondaryGridCard>
-          <SecondaryGridCard>
+          <SecondaryGridCard id='scholar-slp-earnings'>
             <Box sx={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               marginBottom: 1,
@@ -260,6 +277,37 @@ const AxieTracker = () => {
               </Box>
             </Box>
             <Line data={data} options={options} />
+          </SecondaryGridCard>
+          <SecondaryGridCard id='top-3-scholars-slp'>
+            <Box sx={{ 
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginBottom: 1,
+            }}>
+              <Typography variant='h6' component='h6' fontSize='1rem'>
+                Top 3 scholars by SLP
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
+              </Box>
+            </Box>
+            <Divider/>
+            <Box mt={4}>
+              <Bar data={topScholarsData} options={options} />
+            </Box>
+          </SecondaryGridCard>
+          <SecondaryGridCard id='top-3-scholars-slp'>
+            <Box sx={{ 
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginBottom: 1,
+            }}>
+              <Typography variant='h6' component='h6' fontSize='1rem'>
+                Top 3 scholars by MMR
+              </Typography>
+            </Box>
+            <Divider/>
+            <Box mt={4}>
+              <Bar data={topScholarsData} options={options} />
+            </Box>
           </SecondaryGridCard>
         </GridContainer>
       </Box>
