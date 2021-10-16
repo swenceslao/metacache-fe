@@ -1,6 +1,8 @@
-import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import { v4 as uuid } from 'uuid';
 
 const columns = [
@@ -14,7 +16,7 @@ const columns = [
   { field: 'managerCut', headerName: 'Manager cut', width: 160, type: 'number', },
 ];
 
-const rows = [
+const rowData = [
   { 
     id: uuid(), 
     name: 'Namey McNameface', 
@@ -50,15 +52,40 @@ const rows = [
   },
 ];
 
-export function DataTable() {
+const DataTable = () => {
+  const [gridApi, setGridApi] = useState(null);
+  const [gridColumnApi, setGridColumnApi] = useState(null);
+
+  const onGridReady = (params) => {
+    console.log(params);
+    setGridApi(params.api);
+    setGridColumnApi(params.columnApi);
+  };
+
+  const onFirstDataRendered = (params) => {
+    params.api.sizeColumnsToFit();
+  };
+
   return (
-    <Box width='100%' height='400px'>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[10]}
-      />
+    <Box className='ag-theme-alpine' width='100%'>
+      <AgGridReact 
+        domLayout='autoHeight'
+        rowData={rowData} 
+        onGridReady={onGridReady} 
+        onFirstDataRendered={onFirstDataRendered}>
+        {columns.map(({ field, headerName }, index) => (
+          <AgGridColumn 
+            key={index} 
+            field={field} 
+            headerName={headerName}
+            sortable 
+            filter
+            resizable
+          />
+        ))}
+      </AgGridReact>
     </Box>
   );
-}
+};
+
+export default DataTable;

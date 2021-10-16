@@ -25,7 +25,7 @@ import { grey } from '@mui/material/colors';
 
 import SLPImage from '../../../../assets/icons/SLP.png';
 import GridContainer from './GridContainer';
-import { DataTable } from '../../utils';
+import { DataTable } from '../../Common/index';
 
 const data = {
   labels: ['Oct 5', 'Oct 6', 'Oct 7', 'Oct 8', 'Oct 9', 'Oct 10', 'Oct 11'],
@@ -202,12 +202,12 @@ const AxieTracker = () => {
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 marginBottom: 1,
               }}>
-                <Typography variant='h6' component='h6' fontSize='0.5rem'>
+                <Typography variant='h6' component='h6' fontSize='1rem'>
                   Manager SLP
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', }}>
                   <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
-                  <Typography variant='h6' fontWeight='bold' fontSize='0.5rem'>
+                  <Typography variant='h6' fontWeight='bold' fontSize='1rem'>
                     SLP 1,404
                   </Typography>
                 </Box>
