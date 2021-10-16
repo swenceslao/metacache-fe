@@ -1,10 +1,10 @@
-import React, { Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import MainContainer from './components/Common/index';
 
 // lazy load pages
-const AxieTracker = React.lazy(() => import('./components/Tracker/Games/AxieInfinity/index'));
+const AxieTracker = lazy(() => import('./components/Tracker/Games/AxieInfinity/index'));
 
 
 function App() {

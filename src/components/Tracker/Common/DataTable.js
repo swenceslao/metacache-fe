@@ -52,12 +52,11 @@ const rowData = [
   },
 ];
 
-const DataTable = () => {
+export const DataTable = () => {
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
 
   const onGridReady = (params) => {
-    console.log(params);
     setGridApi(params.api);
     setGridColumnApi(params.columnApi);
   };
@@ -87,5 +86,3 @@ const DataTable = () => {
     </Box>
   );
 };
-
-export default DataTable;

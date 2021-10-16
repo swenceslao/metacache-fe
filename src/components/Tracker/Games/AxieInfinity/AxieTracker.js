@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
-import { DefinedRange } from 'react-date-range';
+import { DefinedRange, defaultStaticRanges } from 'react-date-range';
 import { Line } from 'react-chartjs-2';
 import Typography from '@mui/material/Typography';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import TrendingUpTwoToneIcon from '@mui/icons-material/TrendingUpTwoTone';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -20,12 +17,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
-import moment from 'moment';
-import { grey } from '@mui/material/colors';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import Dialog from '@mui/material/Dialog';
 
 import SLPImage from '../../../../assets/icons/SLP.png';
 import GridContainer from './GridContainer';
-import { DataTable } from '../../Common/index';
+import { DataTable, PrimaryGridCard, SecondaryGridCard } from '../../Common/index';
 
 const data = {
   labels: ['Oct 5', 'Oct 6', 'Oct 7', 'Oct 8', 'Oct 9', 'Oct 10', 'Oct 11'],
@@ -62,16 +60,12 @@ const earningsRows = [
   ['7 days', 1840, '77%'],
 ];
 
-const timeframeSelection = [
-  'daily', 'weekly', 'biweekly', 'monthly', 'bimonthly', 'quarterly', 'semiannually', 'annually',
-];
-
 const AxieTracker = () => {
   let theme = createTheme();
   theme = responsiveFontSizes(theme);
 
   const [showDatepicker, setShowDatepicker] = useState(false);
-  const [buttonSelectedTimeframe, setButtonSelectedTimeframe] = useState('daily');
+  const [buttonSelectedTimeframe, setButtonSelectedTimeframe] = useState('Daily');
   const [selectedTimeframe, setSelectedTimeframe] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -79,8 +73,12 @@ const AxieTracker = () => {
     autoFocus: true,
   });
 
-  const handleSelect = (date) => {
-    console.log(date); // native Date object
+  const handleDateRangeSelect = ({ selection }) => {
+    setSelectedTimeframe(selection);
+    const selectedDate = defaultStaticRanges.filter(range => range.isSelected(selection));
+    const labelText = selectedDate.length > 0 ? selectedDate[0].label : 'Custom';
+    setButtonSelectedTimeframe(labelText);
+    setShowDatepicker(false);
   };
 
   const toggleDatePicker = () => {
@@ -120,159 +118,156 @@ const AxieTracker = () => {
             size='small' 
             variant='outlined' 
             startIcon={<CalendarTodayTwoToneIcon />}
-            onClick={() => setShowDatepicker(!showDatepicker)}
+            onClick={toggleDatePicker}
           >
-            Daily
+            {buttonSelectedTimeframe}
           </Button>
         </Tooltip>
       </Box>
     );
   };
 
-  const renderDateRangePicker = () => {
+  const renderModalDatePicker = () => {
     return (
-      <Box sx={{ marginBottom: 4, }} display={ !showDatepicker ? 'none' : 'block' }>
-        <DefinedRange
-          ranges={[selectedTimeframe]}
-          onChange={date => {
-            const { selection } = date;
-            setSelectedTimeframe(selection);
-          }}
-        />
-      </Box>
+      <Dialog handleClose={toggleDatePicker} open={showDatepicker}>
+        <DialogTitle>Select date range</DialogTitle>
+        <DialogContent>
+          <DefinedRange
+            showSelectionPreview
+            ranges={[selectedTimeframe]}
+            onChange={handleDateRangeSelect}
+          />
+        </DialogContent>
+      </Dialog>
     );
   };
 
-  useEffect(() => {
-    const startMoment = moment(selectedTimeframe.startDate);
-    const endMoment = moment(selectedTimeframe.endDate);
-    const duration = moment.duration(endMoment.diff(startMoment)).humanize(true);
-    console.log(duration);
-  }, [selectedTimeframe]);
+  const renderSectionTitle = (title) => {
+    return (
+      <Typography component='h2' variant='h4' fontWeight='bold'>{title}</Typography>
+    );
+  };
 
   return (
     <>
       <Box mb={4}>
-        {dateRangeButtonPicker()}
-        {renderDateRangePicker()}
+        <Box display='flex' alignItems='center' justifyContent='space-between' mb={4}>
+          {renderSectionTitle('SLP')}
+          <Box>
+            {dateRangeButtonPicker()}
+            {renderModalDatePicker()}
+          </Box>
+        </Box>
+        <GridContainer>
+          <PrimaryGridCard>
+            <Box sx={{ 
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginBottom: 1,
+            }}>
+              <Typography variant='h6' component='h6'>
+                Total SLP Earnings
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
+                <Typography variant='h6' fontWeight='bold'>
+                  SLP 2,340
+                </Typography>
+              </Box>
+            </Box>
+            <Divider />
+            <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
+              <Typography variant='overline' lineHeight='1.8'>
+                Today's gains
+              </Typography>
+              <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
+                <Box  sx={{ display: 'flex', color: '#4e8872' }}>
+                  <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
+                  <Typography mr='4px'>
+                    22%
+                  </Typography>
+                  <Typography>
+                    / + SLP 514
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Line data={data} options={options} />
+          </PrimaryGridCard>
+          <SecondaryGridCard>
+            <Box sx={{ 
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginBottom: 1,
+            }}>
+              <Typography variant='h6' component='h6' fontSize='1rem'>
+                Manager SLP
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
+                <Typography variant='h6' fontWeight='bold' fontSize='1rem'>
+                  SLP 1,404
+                </Typography>
+              </Box>
+            </Box>
+            <Divider />
+            <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
+              <Typography variant='overline' lineHeight='1.8'>
+                Today's gains
+              </Typography>
+              <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
+                <Box  sx={{ display: 'flex', color: '#4e8872' }}>
+                  <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
+                  <Typography mr='4px'>
+                    22%
+                  </Typography>
+                  <Typography>
+                    / + SLP 514
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Line data={data} options={options} />
+          </SecondaryGridCard>
+          <SecondaryGridCard>
+            <Box sx={{ 
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginBottom: 1,
+            }}>
+              <Typography variant='h6' component='h6' fontSize='1rem'>
+                Scholar SLP
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
+                <Typography variant='h6' fontWeight='bold' fontSize='1rem'>
+                  SLP 936
+                </Typography>
+              </Box>
+            </Box>
+            <Divider />
+            <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
+              <Typography variant='overline' lineHeight='1.8'>
+                Today's gains
+              </Typography>
+              <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
+                <Box  sx={{ display: 'flex', color: '#4e8872' }}>
+                  <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
+                  <Typography mr='4px'>
+                    22%
+                  </Typography>
+                  <Typography>
+                    / + SLP 514
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Line data={data} options={options} />
+          </SecondaryGridCard>
+        </GridContainer>
       </Box>
-      <GridContainer>
-        <Grid item xs={12} md={6} lg={4}>
-          <Card>
-            <CardContent>
-              <Box sx={{ 
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                marginBottom: 1,
-              }}>
-                <Typography variant='h6' component='h6'>
-                  Total SLP Earnings
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', }}>
-                  <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
-                  <Typography variant='h6' fontWeight='bold'>
-                    SLP 2,340
-                  </Typography>
-                </Box>
-              </Box>
-              <Divider />
-              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
-                <Typography variant='overline' lineHeight='1.8'>
-                  Today's gains
-                </Typography>
-                <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
-                  <Box  sx={{ display: 'flex', color: '#4e8872' }}>
-                    <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
-                    <Typography mr='4px'>
-                      22%
-                    </Typography>
-                    <Typography>
-                      / + SLP 514
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-              <Line data={data} options={options} />
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <Card sx={{ backgroundColor: grey['100'], }}>
-            <CardContent>
-              <Box sx={{ 
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                marginBottom: 1,
-              }}>
-                <Typography variant='h6' component='h6' fontSize='1rem'>
-                  Manager SLP
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', }}>
-                  <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
-                  <Typography variant='h6' fontWeight='bold' fontSize='1rem'>
-                    SLP 1,404
-                  </Typography>
-                </Box>
-              </Box>
-              <Divider />
-              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
-                <Typography variant='overline' lineHeight='1.8'>
-                  Today's gains
-                </Typography>
-                <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
-                  <Box  sx={{ display: 'flex', color: '#4e8872' }}>
-                    <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
-                    <Typography mr='4px'>
-                      22%
-                    </Typography>
-                    <Typography>
-                      / + SLP 514
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-              <Line data={data} options={options} />
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <Card sx={{ backgroundColor: grey['100'], }}>
-            <CardContent>
-              <Box sx={{ 
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                marginBottom: 1,
-              }}>
-                <Typography variant='h6' component='h6' fontSize='1rem'>
-                  Scholar SLP
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', }}>
-                  <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
-                  <Typography variant='h6' fontWeight='bold' fontSize='1rem'>
-                    SLP 936
-                  </Typography>
-                </Box>
-              </Box>
-              <Divider />
-              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
-                <Typography variant='overline' lineHeight='1.8'>
-                  Today's gains
-                </Typography>
-                <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
-                  <Box  sx={{ display: 'flex', color: '#4e8872' }}>
-                    <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
-                    <Typography mr='4px'>
-                      22%
-                    </Typography>
-                    <Typography>
-                      / + SLP 514
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-              <Line data={data} options={options} />
-            </CardContent>
-          </Card>
-        </Grid>
-      </GridContainer>
+      <Divider />
       <Box my={4}>
+        <Box display='flex' alignItems='center' justifyContent='space-between' mb={4}>
+          {renderSectionTitle('Scholars')}
+        </Box>
         <DataTable />
       </Box>
     </>

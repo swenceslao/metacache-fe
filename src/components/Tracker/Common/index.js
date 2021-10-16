@@ -1,3 +1,4 @@
-import DataTable from './DataTable';
+import { DataTable } from './DataTable';
+import { PrimaryGridCard, SecondaryGridCard } from './GridCard';
 
-export { DataTable };
+export { DataTable, PrimaryGridCard, SecondaryGridCard };
