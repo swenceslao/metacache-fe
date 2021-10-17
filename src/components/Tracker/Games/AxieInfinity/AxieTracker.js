@@ -50,11 +50,11 @@ const options = {
 };
 
 const topScholarsData = {
-  labels: ['Namey 1', 'Namey 2', 'Namey 3'],
+  labels: ['Namey 1', 'Namey 2', 'Namey 3', 'Namey 4', 'Namey 5', 'Namey 6', 'Namey 7', 'Namey 8', 'Namey 9', 'Namey 10'],
   datasets: [
     {
       label: 'Scholar performance',
-      data: [251, 213, 197,],
+      data: [251, 213, 197, 123, 201, 89, 92, 67, 125, 180],
       fill: false,
       backgroundColor: [
         'rgba(255, 99, 132, 0.2)',
@@ -94,6 +94,7 @@ const AxieTracker = () => {
     setSelectedTimeframe(selection);
     const selectedDate = defaultStaticRanges.filter(range => range.isSelected(selection));
     const labelText = selectedDate.length > 0 ? selectedDate[0].label : 'Custom';
+    console.log(labelText);
     setButtonSelectedTimeframe(labelText);
     setShowDatepicker(false);
   };
@@ -194,16 +195,16 @@ const AxieTracker = () => {
             <Divider />
             <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
               <Typography variant='overline' lineHeight='1.8'>
-                Today's gains
+                Compared to {buttonSelectedTimeframe}
               </Typography>
               <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
                 <Box  sx={{ display: 'flex', color: '#4e8872' }}>
                   <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
                   <Typography mr='4px'>
-                    22%
+                    + SLP 514
                   </Typography>
-                  <Typography>
-                    / + SLP 514
+                  <Typography mr='4px'>
+                    (22%)
                   </Typography>
                 </Box>
               </Box>
@@ -228,16 +229,16 @@ const AxieTracker = () => {
             <Divider />
             <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
               <Typography variant='overline' lineHeight='1.8'>
-                Today's gains
+                Compared to {buttonSelectedTimeframe}
               </Typography>
               <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
                 <Box  sx={{ display: 'flex', color: '#4e8872' }}>
                   <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
                   <Typography mr='4px'>
-                    22%
+                    + SLP 514
                   </Typography>
-                  <Typography>
-                    / + SLP 514
+                  <Typography mr='4px'>
+                    (22%)
                   </Typography>
                 </Box>
               </Box>
@@ -262,29 +263,29 @@ const AxieTracker = () => {
             <Divider />
             <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
               <Typography variant='overline' lineHeight='1.8'>
-                Today's gains
+                Compared to {buttonSelectedTimeframe}
               </Typography>
               <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
                 <Box  sx={{ display: 'flex', color: '#4e8872' }}>
                   <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
                   <Typography mr='4px'>
-                    22%
+                    + SLP 514
                   </Typography>
-                  <Typography>
-                    / + SLP 514
+                  <Typography mr='4px'>
+                    (22%)
                   </Typography>
                 </Box>
               </Box>
             </Box>
             <Line data={data} options={options} />
           </SecondaryGridCard>
-          <SecondaryGridCard id='top-3-scholars-slp'>
+          <SecondaryGridCard id='top-scholars-slp'>
             <Box sx={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               marginBottom: 1,
             }}>
               <Typography variant='h6' component='h6' fontSize='1rem'>
-                Top 3 scholars by SLP
+                Top 10 scholars by SLP
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', }}>
                 <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
@@ -295,13 +296,13 @@ const AxieTracker = () => {
               <Bar data={topScholarsData} options={options} />
             </Box>
           </SecondaryGridCard>
-          <SecondaryGridCard id='top-3-scholars-slp'>
+          <SecondaryGridCard id='top-scholars-mmr'>
             <Box sx={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               marginBottom: 1,
             }}>
               <Typography variant='h6' component='h6' fontSize='1rem'>
-                Top 3 scholars by MMR
+                Top 10 scholars by MMR
               </Typography>
             </Box>
             <Divider/>
