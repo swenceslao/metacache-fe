@@ -9,18 +9,17 @@ import TrendingUpTwoToneIcon from '@mui/icons-material/TrendingUpTwoTone';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import CalendarTodayTwoToneIcon from '@mui/icons-material/CalendarTodayTwoTone';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Divider from '@mui/material/Divider';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Dialog from '@mui/material/Dialog';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import FormControl from '@mui/material/FormControl';
 
 import SLPImage from '../../../../assets/icons/SLP.png';
+import ETHImage from '../../../../assets/icons/eth-diamond-purple.png';
 import GridContainer from './GridContainer';
 import { DataTable, PrimaryGridCard, SecondaryGridCard } from '../../Common/index';
 
@@ -80,9 +79,25 @@ const earningsRows = [
   ['7 days', 1840, '77%'],
 ];
 
+const fiatCurrencies = [
+  {
+    shortHand: 'PHP',
+    longHand: 'Philippine Peso',
+  },
+  {
+    shortHand: 'USD',
+    longHand: 'US Dollar',
+  },
+  {
+    shortHand: 'VND',
+    longHand: 'Vietnamese Dong',
+  },
+];
+
 const AxieTracker = () => {
   const [showDatepicker, setShowDatepicker] = useState(false);
-  const [buttonSelectedTimeframe, setButtonSelectedTimeframe] = useState('Daily');
+  const [buttonSelectedTimeframe, setButtonSelectedTimeframe] = useState('Today');
+  const [fiatCurrencySelected, setFiatCurrencySelected] = useState(fiatCurrencies[1].longHand);
   const [selectedTimeframe, setSelectedTimeframe] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -99,38 +114,37 @@ const AxieTracker = () => {
     setShowDatepicker(false);
   };
 
+  const handleFiatCurrencySelect = (event) => {
+    setFiatCurrencySelected(event.target.value);
+  };
+
   const toggleDatePicker = () => {
     setShowDatepicker(!showDatepicker);
   };
 
-  const renderTableMockData = () => (
-    <Box width='100%' my={4}>
-      <TableContainer>
-        <Table aria-label='quick slp stats table' size='small'>
-          <TableHead>
-            <TableRow>
-              {earningsHeaders.map(header => (
-                <TableCell key={header}>{header}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {earningsRows.map((row, index) => (
-              <TableRow key={index}>
-                {row.map((cell, index) => (
-                  <TableCell key={index}>{cell}</TableCell>
-                ))}
-              </TableRow>
+  const fiatCurrencyPicker = () => {
+    return (
+      <Box mx={1} minWidth={130}>
+        <FormControl fullWidth size='small'>
+          <InputLabel id="fiat-select-label">Fiat Currency</InputLabel>
+          <Select
+            labelId='fiat-select-label'
+            value={fiatCurrencySelected}
+            label='Fiat Currency'
+            onChange={handleFiatCurrencySelect}
+          >
+            {fiatCurrencies.map(({ shortHand, longHand }, index) => (
+              <MenuItem key={index} value={longHand}>{shortHand}&nbsp;({longHand})</MenuItem>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
-  );
+          </Select>
+        </FormControl>
+      </Box>
+    );
+  };
 
   const dateRangeButtonPicker = () => {
     return (
-      <Box>
+      <Box mx={1}>
         <Tooltip title='Select time frame'>
           <Button 
             size='small' 
@@ -168,12 +182,56 @@ const AxieTracker = () => {
 
   return (
     <>
-      <Box mb={4}>
+      {renderModalDatePicker()}
+      <Box sx={{ 
+        mb: 4, 
+        display: 'flex', flexFlow: 'row wrap', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+      }}>
+        <Typography component='h1' variant='h4'>Axie Infinity</Typography>
+        <Box sx={{ 
+          border: 1, borderColor: 'secondary.main', borderRadius: 2,
+          p: 1, my: 0.5, 
+          width: 'fit-content',
+          display: 'flex', flexFlow: 'column nowrap', 
+          alignItems: 'center',
+          m: {
+            xs: '1rem auto 0',
+            sm: '0',
+          },
+        }}>
+          <Box sx={{ 
+            display: 'flex', alignItems: 'center', 
+            borderBottom: 1, borderColor: 'secondary.light',
+            mb: 1, pb: 0.5,
+          }}>
+            <img src={SLPImage} alt='SLP' style={{ maxWidth: 24, maxHeight: 24, paddingRight: 6 }} />
+            <Typography variant='h6'>
+              1 SLP
+            </Typography>
+            <Typography variant='h6' mx={1}>
+              &asymp;
+            </Typography>
+            <img src={ETHImage} alt='ETH' style={{ maxWidth: 20, maxHeight: 20, paddingRight: 6 }} />
+            <Typography variant='h6'>
+              0.000018 ETH
+            </Typography>
+          </Box>
+          <Typography variant='subtitle2' mx={1}>
+            1 ETH &asymp; 3,812.71 USD
+          </Typography>
+        </Box>
+      </Box>
+      <Divider />
+      <Box my={4}>
         <Box display='flex' alignItems='center' justifyContent='space-between' mb={4}>
-          {renderSectionTitle('SLP')}
           <Box>
+            {renderSectionTitle('SLP')}
+          </Box>
+          <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', }}>
+            {fiatCurrencyPicker()}
             {dateRangeButtonPicker()}
-            {renderModalDatePicker()}
           </Box>
         </Box>
         <GridContainer>
@@ -182,26 +240,40 @@ const AxieTracker = () => {
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               marginBottom: 1,
             }}>
-              <Typography variant='h6' component='h6'>
-                Total SLP Earnings
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', }}>
-                <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
-                <Typography variant='h6' fontWeight='bold'>
-                  SLP 2,340
+              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', }}>
+                <Typography variant='h6' component='h6'>
+                  Total SLP
                 </Typography>
+                <Typography variant='caption' component='p'>
+                  {buttonSelectedTimeframe}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-end', }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                  <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
+                  <Typography variant='h6' fontWeight='bold'>
+                    2,340 SLP
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                  {/* <img src={ETHImage} alt='ETH' style={{ maxWidth: 18, maxHeight: 18, paddingRight: 8 }} /> */}
+                  <Typography variant='caption'>
+                    0.042 ETH / 160 USD
+                  </Typography>
+                </Box>
               </Box>
             </Box>
             <Divider />
             <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
               <Typography variant='overline' lineHeight='1.8'>
-                Compared to {buttonSelectedTimeframe}
+                {buttonSelectedTimeframe.toLowerCase() === 'today' && 'Earnings Today'}
+                {buttonSelectedTimeframe.toLowerCase() !== 'today' && `Compared to ${buttonSelectedTimeframe}`}
               </Typography>
               <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
                 <Box  sx={{ display: 'flex', color: '#4e8872' }}>
                   <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
                   <Typography mr='4px'>
-                    + SLP 514
+                    + 514 SLP
                   </Typography>
                   <Typography mr='4px'>
                     (22%)
@@ -211,31 +283,45 @@ const AxieTracker = () => {
             </Box>
             <Line data={data} options={options} />
           </PrimaryGridCard>
-          <SecondaryGridCard id='manager-slp-earnings'>
+          <PrimaryGridCard id='manager-slp-earnings'>
             <Box sx={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               marginBottom: 1,
             }}>
-              <Typography variant='h6' component='h6' fontSize='1rem'>
-                Manager SLP
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', }}>
-                <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
-                <Typography variant='h6' fontWeight='bold' fontSize='1rem'>
-                  SLP 1,404
+              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', }}>
+                <Typography variant='h6' component='h6'>
+                  Manager SLP
                 </Typography>
+                <Typography variant='caption' component='p'>
+                  {buttonSelectedTimeframe}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-end', }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                  <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
+                  <Typography variant='h6' fontWeight='bold'>
+                    1,440 SLP
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                  {/* <img src={ETHImage} alt='ETH' style={{ maxWidth: 18, maxHeight: 18, paddingRight: 8 }} /> */}
+                  <Typography variant='caption'>
+                    0.042 ETH / 160 USD
+                  </Typography>
+                </Box>
               </Box>
             </Box>
             <Divider />
             <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
               <Typography variant='overline' lineHeight='1.8'>
-                Compared to {buttonSelectedTimeframe}
+                {buttonSelectedTimeframe.toLowerCase() === 'today' && 'Earnings Today'}
+                {buttonSelectedTimeframe.toLowerCase() !== 'today' && `Compared to ${buttonSelectedTimeframe}`}
               </Typography>
               <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
                 <Box  sx={{ display: 'flex', color: '#4e8872' }}>
                   <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
                   <Typography mr='4px'>
-                    + SLP 514
+                    + 514 SLP
                   </Typography>
                   <Typography mr='4px'>
                     (22%)
@@ -244,32 +330,45 @@ const AxieTracker = () => {
               </Box>
             </Box>
             <Line data={data} options={options} />
-          </SecondaryGridCard>
-          <SecondaryGridCard id='scholar-slp-earnings'>
+          </PrimaryGridCard>
+          <PrimaryGridCard id='scholar-slp-earnings'>
             <Box sx={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               marginBottom: 1,
             }}>
-              <Typography variant='h6' component='h6' fontSize='1rem'>
-                Scholar SLP
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', }}>
-                <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
-                <Typography variant='h6' fontWeight='bold' fontSize='1rem'>
-                  SLP 936
+              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', }}>
+                <Typography variant='h6' component='h6'>
+                  Scholar SLP
                 </Typography>
+                <Typography variant='caption' component='p'>
+                  {buttonSelectedTimeframe}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-end', }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                  <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
+                  <Typography variant='h6' fontWeight='bold'>
+                    1,240 SLP
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                  <Typography variant='caption'>
+                    0.042 ETH / 160 USD
+                  </Typography>
+                </Box>
               </Box>
             </Box>
             <Divider />
             <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
               <Typography variant='overline' lineHeight='1.8'>
-                Compared to {buttonSelectedTimeframe}
+                {buttonSelectedTimeframe.toLowerCase() === 'today' && 'Earnings Today'}
+                {buttonSelectedTimeframe.toLowerCase() !== 'today' && `Compared to ${buttonSelectedTimeframe}`}
               </Typography>
               <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
                 <Box  sx={{ display: 'flex', color: '#4e8872' }}>
                   <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
                   <Typography mr='4px'>
-                    + SLP 514
+                    + 514 SLP
                   </Typography>
                   <Typography mr='4px'>
                     (22%)
@@ -278,7 +377,7 @@ const AxieTracker = () => {
               </Box>
             </Box>
             <Line data={data} options={options} />
-          </SecondaryGridCard>
+          </PrimaryGridCard>
           <SecondaryGridCard id='top-scholars-slp'>
             <Box sx={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
