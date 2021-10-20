@@ -1,4 +1,4 @@
-import React, { useState, useMemo, forwardRef } from 'react';
+import React, { useState, useEffect, useMemo, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { Link as RouterLink, withRouter } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
@@ -119,7 +119,13 @@ const NavBar = withRouter(props => {
 
   const handleTrackerExpandToggle = () => {
     setTrackerSubHeaderOpen(!trackerSubHeaderOpen);
-  }
+  };
+
+  useEffect(() => {
+    if (location.pathname.includes('trackers')) {
+      setTrackerSubHeaderOpen(true);
+    }
+  }, [location]);
 
   return (
     <>
@@ -166,7 +172,7 @@ const NavBar = withRouter(props => {
             <List component='div' disablePadding>
               <ListItemLink 
                 sx={{ pl: 4 }} 
-                to='/axieinfinity' primary='Axie Infinity' 
+                to='/trackers/axieinfinity' primary='Axie Infinity' 
                 icon={<img src={AxieLogo} alt='Axie Infinity' width='40' />} 
                 selected={location.pathname.includes('axie')}
               />

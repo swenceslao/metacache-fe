@@ -37,7 +37,7 @@ function App() {
                   render={() => <div>Homepage</div>} 
                 />
                 <Route 
-                  exact path='/axieinfinity' 
+                  exact path='/trackers/axieinfinity' 
                   render={() => <AxieTracker/>} 
                 />
                 <Route path='*' render={() => <div>404 not found</div>} />
