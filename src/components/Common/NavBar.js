@@ -25,6 +25,8 @@ import Collapse from '@mui/material/Collapse';
 import '../../assets/App.css';
 import { DrawerHeader } from './utils';
 import AxieLogo from '../../assets/icons/AxieInfinityFullLogo.webp';
+import MetaCacheLogoForLight from '../../assets/brand/metacache_horizontal_color.png';
+import MetaCacheLogoForDark from '../../assets/brand/metacache_horizontal_white.png';
 
 // Source: https://mui.com/components/drawers/
 
@@ -110,6 +112,7 @@ const ListItemLink = (props) => {
 const NavBar = withRouter(props => {
   const { location } = props;
   const theme = useTheme();
+  const { palette } = theme;
   const [open, setOpen] = useState(false);
   const [trackerSubHeaderOpen, setTrackerSubHeaderOpen] = useState(false);
 
@@ -150,11 +153,11 @@ const NavBar = withRouter(props => {
       </AppBar>
       <Drawer variant='permanent' open={open}>
         <DrawerHeader>
+          <img src={palette.mode === 'light' ? MetaCacheLogoForLight : MetaCacheLogoForDark} alt='MetaCache' width='180' />
           <IconButton onClick={handleDrawerToggle}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </DrawerHeader>
-        <Divider />
         <List>
           <ListItemLink 
             to='/dashboard' primary='Dashboard' 

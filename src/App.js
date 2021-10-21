@@ -3,6 +3,11 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+
 import MainContainer from './components/Common/index';
 
 // lazy load pages
@@ -21,11 +26,27 @@ function App() {
     [prefersDarkMode],
   );
 
+  const renderLoading = () => {
+    return (
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open
+      >
+        <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'center', }}>
+          <CircularProgress color='inherit' mb={2} />
+          <Typography variant='subtitle1'>
+            Loading
+          </Typography>
+        </Box>
+      </Backdrop>
+    );
+  };
+
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={renderLoading()}>
           <Router>
             <MainContainer>
               <Switch>

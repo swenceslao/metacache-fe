@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { DefinedRange, defaultStaticRanges } from 'react-date-range';
-import { Line, Bar } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import TrendingUpTwoToneIcon from '@mui/icons-material/TrendingUpTwoTone';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import CalendarTodayTwoToneIcon from '@mui/icons-material/CalendarTodayTwoTone';
@@ -17,24 +16,14 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import SLPImage from '../../../../assets/icons/SLP.png';
 import ETHImage from '../../../../assets/icons/eth-diamond-purple.png';
-import GridContainer from './GridContainer';
-import { DataTable, PrimaryGridCard, SecondaryGridCard } from '../../Common/index';
-
-const data = {
-  labels: ['Oct 5', 'Oct 6', 'Oct 7', 'Oct 8', 'Oct 9', 'Oct 10', 'Oct 11'],
-  datasets: [
-    {
-      label: 'SLP daily gains',
-      data: [127, 251, 213, 301, 190, 218, 514],
-      fill: false,
-      backgroundColor: '#76b99c',
-      borderColor: '#4e8872',
-    },
-  ],
-};
+import GridContainer from '../../Common/GridContainer';
+import { TotalSLPCard } from './index';
+import { DataTable, SecondaryGridCard, SwipeableCards } from '../../Common/index';
 
 const options = {
   scales: {
@@ -79,17 +68,7 @@ const dateComparisonMapping = {
   useCustom: ['Custom', 'Custom'],
 };
 
-const earningsHeaders = [
-  'Range', 'SLP', 'Gain %'
-];
-
-const earningsRows = [
-  ['Yesterday', 514, '22%'],
-  ['3 days', 1540, '65%'],
-  ['7 days', 1840, '77%'],
-];
-
-const fiatCurrencies = [
+const currencies = [
   {
     shortHand: 'PHP',
     longHand: 'Philippine Peso',
@@ -105,9 +84,11 @@ const fiatCurrencies = [
 ];
 
 const AxieTracker = () => {
+  const theme = useTheme();
+  const mobileOnly = useMediaQuery(theme.breakpoints.down('sm'));
   const [showDatepicker, setShowDatepicker] = useState(false);
   const [buttonSelectedTimeframe, setButtonSelectedTimeframe] = useState(dateComparisonMapping.useToday);
-  const [fiatCurrencySelected, setFiatCurrencySelected] = useState(fiatCurrencies[1].longHand);
+  const [currencySelected, setCurrencySelected] = useState(currencies[1].longHand);
   const [selectedTimeframe, setSelectedTimeframe] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -124,26 +105,26 @@ const AxieTracker = () => {
     setShowDatepicker(false);
   };
 
-  const handleFiatCurrencySelect = (event) => {
-    setFiatCurrencySelected(event.target.value);
+  const handleCurrencySelect = (event) => {
+    setCurrencySelected(event.target.value);
   };
 
   const toggleDatePicker = () => {
     setShowDatepicker(!showDatepicker);
   };
 
-  const renderFiatCurrencyPicker = () => {
+  const renderCurrencyPicker = () => {
     return (
       <Box mx={1} minWidth={130}>
         <FormControl fullWidth size='small'>
-          <InputLabel id="fiat-select-label">Fiat Currency</InputLabel>
+          <InputLabel id="fiat-select-label">Currency</InputLabel>
           <Select
             labelId='fiat-select-label'
-            value={fiatCurrencySelected}
+            value={currencySelected}
             label='Fiat Currency'
-            onChange={handleFiatCurrencySelect}
+            onChange={handleCurrencySelect}
           >
-            {fiatCurrencies.map(({ shortHand, longHand }, index) => (
+            {currencies.map(({ shortHand, longHand }, index) => (
               <MenuItem key={index} value={longHand}>{shortHand}&nbsp;({longHand})</MenuItem>
             ))}
           </Select>
@@ -198,6 +179,7 @@ const AxieTracker = () => {
         display: 'flex', flexFlow: 'row wrap', 
         alignItems: 'center', 
         justifyContent: 'space-between',
+        width: '100%',
       }}>
         <Typography component='h1' variant='h4'>Axie Infinity</Typography>
         <Box sx={{ 
@@ -223,74 +205,52 @@ const AxieTracker = () => {
             <Typography variant='h6' mx={1}>
               &asymp;
             </Typography>
-            <img src={ETHImage} alt='ETH' style={{ maxWidth: 20, maxHeight: 20, paddingRight: 6 }} />
             <Typography variant='h6'>
-              0.000018 ETH
+              4,241.88 USD
             </Typography>
           </Box>
-          <Typography variant='subtitle2' mx={1}>
-            1 ETH &asymp; 3,812.71 USD
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', }}>
+          <img src={ETHImage} alt='ETH' style={{ maxWidth: 16, maxHeight: 16, paddingRight: 2 }} />
+            <Typography variant='subtitle2' mx={1}>
+              1 ETH &asymp; 3,812.71 USD
+            </Typography>
+          </Box>
         </Box>
       </Box>
       <Divider />
-      <Box my={4}>
+      <Box my={4} width='100%'>
         <Box display='flex' alignItems='center' justifyContent='space-between' mb={4}>
           <Box>
             {renderSectionTitle('SLP')}
           </Box>
           <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', }}>
-            {renderFiatCurrencyPicker()}
+            {renderCurrencyPicker()}
             {renderDateRangeButtonPicker()}
           </Box>
         </Box>
+        {mobileOnly && 
+          <SwipeableCards>
+            <TotalSLPCard 
+              referenceTime={dateComparisonMapping.useToday[0]} 
+              comparisonTime={dateComparisonMapping.useToday[1]} 
+            />
+            <TotalSLPCard 
+              referenceTime={dateComparisonMapping.useToday[0]} 
+              comparisonTime={dateComparisonMapping.useToday[1]} 
+            />
+            <TotalSLPCard 
+              referenceTime={dateComparisonMapping.useToday[0]} 
+              comparisonTime={dateComparisonMapping.useToday[1]} 
+            />
+          </SwipeableCards>
+        }
         <GridContainer>
-          <PrimaryGridCard id='total-slp-earnings'>
-            <Box sx={{ 
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              marginBottom: 1,
-            }}>
-              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', }}>
-                <Typography variant='h6' component='h6'>
-                  Total SLP
-                </Typography>
-                <Typography variant='caption' component='p'>
-                  {buttonSelectedTimeframe[0]}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-end', }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', }}>
-                  <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
-                  <Typography variant='h6' fontWeight='bold'>
-                    2,340 SLP
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', }}>
-                  <Typography variant='caption'>
-                    0.042 ETH / 160 USD
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-            <Divider />
-            <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', margin: '1rem 0' }}>
-              <Typography variant='overline' lineHeight='1.8'>
-                {`Compared to ${buttonSelectedTimeframe[1]}`}
-              </Typography>
-              <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
-                <Box  sx={{ display: 'flex', color: '#4e8872' }}>
-                  <TrendingUpTwoToneIcon sx={{ marginRight: '4px' }} />
-                  <Typography mr='4px'>
-                    + 514 SLP
-                  </Typography>
-                  <Typography mr='4px'>
-                    (22%)
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-            <Line data={data} options={options} />
-          </PrimaryGridCard>
+          {!mobileOnly &&
+            <TotalSLPCard 
+              referenceTime={dateComparisonMapping.useToday[0]} 
+              comparisonTime={dateComparisonMapping.useToday[1]} 
+            />
+          }
           <SecondaryGridCard id='top-scholars-slp'>
             <Box sx={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
