@@ -18,7 +18,7 @@ export const SwipeableCards = ({ children }) => {
 
   return (
     <Box sx={{ 
-      maxWidth: 400, 
+      maxWidth: 350, 
       flexGrow: 1, 
       mb: 2, 
     }}>

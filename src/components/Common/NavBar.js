@@ -23,7 +23,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 
 import '../../assets/App.css';
-import { DrawerHeader } from './utils';
+import { DrawerHeader, routeMapping } from './utils';
 import AxieLogo from '../../assets/icons/AxieInfinityFullLogo.webp';
 import MetaCacheLogoForLight from '../../assets/brand/metacache_horizontal_color.png';
 import MetaCacheLogoForDark from '../../assets/brand/metacache_horizontal_white.png';
@@ -124,6 +124,11 @@ const NavBar = withRouter(props => {
     setTrackerSubHeaderOpen(!trackerSubHeaderOpen);
   };
 
+  const navBarTitle = () => {
+    const mapping = routeMapping.find(route => location.pathname.includes(Object.keys(route)[0]));
+    return mapping[Object.keys(mapping)[0]];
+  };
+
   useEffect(() => {
     if (location.pathname.includes('trackers')) {
       setTrackerSubHeaderOpen(true);
@@ -147,7 +152,7 @@ const NavBar = withRouter(props => {
             <MenuIcon />
           </IconButton>
           <Typography variant='h6' noWrap component='strong'>
-            MetaCache
+            {navBarTitle()}
           </Typography>
         </Toolbar>
       </AppBar>

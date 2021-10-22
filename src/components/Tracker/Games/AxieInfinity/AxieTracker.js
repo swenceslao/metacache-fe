@@ -22,20 +22,9 @@ import { useTheme } from '@mui/material/styles';
 import SLPImage from '../../../../assets/icons/SLP.png';
 import ETHImage from '../../../../assets/icons/eth-diamond-purple.png';
 import GridContainer from '../../Common/GridContainer';
-import { TotalSLPCard } from './index';
-import { DataTable, SecondaryGridCard, SwipeableCards } from '../../Common/index';
-
-const options = {
-  scales: {
-    yAxes: [
-      {
-        ticks: {
-          beginAtZero: true,
-        },
-      },
-    ],
-  },
-};
+import { TotalSLPCard, ScholarsTable } from './index';
+import { SecondaryGridCard, SwipeableCards } from '../../Common/index';
+import { lineChartOptions } from '../../Common/ChartOptions';
 
 const topScholarsData = {
   labels: ['Namey 1', 'Namey 2', 'Namey 3', 'Namey 4', 'Namey 5', 'Namey 6', 'Namey 7', 'Namey 8', 'Namey 9', 'Namey 10'],
@@ -178,13 +167,12 @@ const AxieTracker = () => {
         mb: 4, 
         display: 'flex', flexFlow: 'row wrap', 
         alignItems: 'center', 
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         width: '100%',
       }}>
-        <Typography component='h1' variant='h4'>Axie Infinity</Typography>
         <Box sx={{ 
           border: 1, borderColor: 'secondary.main', borderRadius: 2,
-          p: 1, my: 0.5, 
+          py: 1, px: 2, my: 0.5, 
           width: 'fit-content',
           display: 'flex', flexFlow: 'column nowrap', 
           alignItems: 'center',
@@ -265,7 +253,7 @@ const AxieTracker = () => {
             </Box>
             <Divider/>
             <Box mt={4}>
-              <Bar data={topScholarsData} options={options} />
+              <Bar data={topScholarsData} options={lineChartOptions} />
             </Box>
           </SecondaryGridCard>
           <SecondaryGridCard id='top-scholars-mmr'>
@@ -279,7 +267,7 @@ const AxieTracker = () => {
             </Box>
             <Divider/>
             <Box mt={4}>
-              <Bar data={topScholarsData} options={options} />
+              <Bar data={topScholarsData} options={lineChartOptions} />
             </Box>
           </SecondaryGridCard>
         </GridContainer>
@@ -289,7 +277,7 @@ const AxieTracker = () => {
         <Box display='flex' alignItems='center' justifyContent='space-between' mb={4}>
           {renderSectionTitle('Scholars')}
         </Box>
-        <DataTable />
+        <ScholarsTable />
       </Box>
     </>
   );

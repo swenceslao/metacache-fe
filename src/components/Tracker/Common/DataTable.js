@@ -1,61 +1,11 @@
 import { useState } from 'react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
+import PropTypes from 'prop-types';
 import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 
-
-import { v4 as uuid } from 'uuid';
-
-const columns = [
-  { field: 'name', headerName: 'Name', editable: true, },
-  { field: 'ign', headerName: 'IGN', editable: true, },
-  { field: 'today', headerName: 'SLP today', type: 'numberColumn', },
-  { field: 'yesterday', headerName: 'SLP yesterday', type: 'numberColumn', },
-  { field: 'mmr', headerName: 'MMR', type: 'numberColumn', },
-  { field: 'hoursTilClaim', headerName: 'Hours till claim', },
-  { field: 'scholarCut', headerName: 'Scholar cut', type: 'numberColumn', },
-  { field: 'managerCut', headerName: 'Manager cut', type: 'numberColumn', },
-];
-
-const rowData = [
-  { 
-    id: uuid(), 
-    name: 'Namey McNameface', 
-    ign: 'NameyScholar1',
-    today: 65,
-    yesterday: 105,
-    mmr: 1482,
-    hoursTilClaim: `${57} hours`,
-    scholarCut: 933,
-    managerCut: 1023,
-  },
-  { 
-    id: uuid(), 
-    name: 'Namey McNameface', 
-    ign: 'NameyScholar2',
-    today: 65,
-    yesterday: 105,
-    mmr: 1482,
-    hoursTilClaim: `${57} hours`,
-    scholarCut: 933,
-    managerCut: 1023,
-  },
-  { 
-    id: uuid(), 
-    name: 'Namey McNameface', 
-    ign: 'NameyScholar3',
-    today: 65,
-    yesterday: 105,
-    mmr: 1482,
-    hoursTilClaim: `${57} hours`,
-    scholarCut: 933,
-    managerCut: 1023,
-  },
-];
-
-
-export const DataTable = () => {
+export const DataTable = ({ columns, rows }) => {
   const theme = useTheme();
   if (theme.palette.mode === 'light') {
     import('ag-grid-community/dist/styles/ag-theme-alpine.css');  
@@ -63,7 +13,9 @@ export const DataTable = () => {
     import('ag-grid-community/dist/styles/ag-theme-alpine-dark.css');  
   }
 
+  // eslint-disable-next-line no-unused-vars
   const [gridApi, setGridApi] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [gridColumnApi, setGridColumnApi] = useState(null);
 
   const onGridReady = (params) => {
@@ -75,8 +27,6 @@ export const DataTable = () => {
     params.api.sizeColumnsToFit();
   };
 
-  // const 
-
   return (
     <Box 
       className={theme.palette.mode === 'light' ? 'ag-theme-alpine' : 'ag-theme-alpine-dark'}
@@ -84,9 +34,12 @@ export const DataTable = () => {
     >
       <AgGridReact 
         domLayout='autoHeight'
-        rowData={rowData} 
+        rowData={rows} 
         onGridReady={onGridReady} 
-        onFirstDataRendered={onFirstDataRendered}>
+        onFirstDataRendered={onFirstDataRendered}
+        pagination={true}
+        paginationPageSize={10}
+      >
         {columns.map(({ field, headerName, ...rest }, index) => (
           <AgGridColumn 
             key={index} 
@@ -102,4 +55,9 @@ export const DataTable = () => {
       </AgGridReact>
     </Box>
   );
+};
+
+DataTable.propTypes = {
+  columns: PropTypes.array.isRequired,
+  rows: PropTypes.array.isRequired,
 };
