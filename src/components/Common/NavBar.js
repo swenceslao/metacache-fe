@@ -21,6 +21,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
+import Image from 'mui-image';
 
 import '../../assets/App.css';
 import { DrawerHeader, routeMapping } from './utils';
@@ -125,7 +126,7 @@ const NavBar = withRouter(props => {
   };
 
   const navBarTitle = () => {
-    const mapping = routeMapping.find(route => location.pathname.includes(Object.keys(route)[0]));
+    const mapping = routeMapping.find(route => location.pathname.includes(Object.keys(route)[0])) || { '/': 'MetaCache'};
     return mapping[Object.keys(mapping)[0]];
   };
 
@@ -158,7 +159,11 @@ const NavBar = withRouter(props => {
       </AppBar>
       <Drawer variant='permanent' open={open}>
         <DrawerHeader>
-          <img src={palette.mode === 'light' ? MetaCacheLogoForLight : MetaCacheLogoForDark} alt='MetaCache' width='180' />
+          <Image 
+            src={palette.mode === 'light' ? MetaCacheLogoForLight : MetaCacheLogoForDark} 
+            alt='MetaCache' 
+            width='180'
+          />
           <IconButton onClick={handleDrawerToggle}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>

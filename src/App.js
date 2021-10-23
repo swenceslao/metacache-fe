@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Backdrop from '@mui/material/Backdrop';
@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import MainContainer from './components/Common/index';
 
 // lazy load pages
+const LandingPage = lazy(() => import('./components/Landing/index'));
 const AxieTracker = lazy(() => import('./components/Tracker/Games/AxieInfinity/index'));
 
 function App() {
@@ -48,22 +49,29 @@ function App() {
         <CssBaseline />
         <Suspense fallback={renderLoading()}>
           <Router>
-            <MainContainer>
-              <Switch>
-                <Route exact path='/'>
-                  <Redirect to='/dashboard' />
-                </Route>
-                <Route 
-                  exact path='/dashboard' 
-                  render={() => <div>Homepage</div>} 
-                />
-                <Route 
-                  exact path='/trackers/axieinfinity' 
-                  render={() => <AxieTracker/>} 
-                />
-                <Route path='*' render={() => <div>404 not found</div>} />
-              </Switch>
-            </MainContainer>
+            <Switch>
+              <Route 
+                exact path='/' 
+                component={LandingPage} 
+              />
+              <Route 
+                exact path='/dashboard' 
+                render={() => 
+                  <MainContainer>
+                    <div>Homepage</div>
+                  </MainContainer>
+                } 
+              />
+              <Route 
+                exact path='/trackers/axieinfinity' 
+                render={() => 
+                  <MainContainer>
+                    <AxieTracker/>
+                  </MainContainer>
+                } 
+              />
+              <Route path='*' render={() => <div>404 not found</div>} />
+            </Switch>
           </Router>
         </Suspense>
       </ThemeProvider>
