@@ -10,7 +10,6 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export const routeMapping = [
-  // { '/': 'MetaCache' },
   { 'dashboard': 'Dashboard' },
   { 'axieinfinity': 'Axie Infinity' },
   { 'pegaxie': 'Peg Axie' },

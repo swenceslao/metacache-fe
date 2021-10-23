@@ -1,13 +1,13 @@
-import Box from '@mui/material/Box';
+import Box from "@mui/material/Box";
 
-import { DrawerHeader } from './utils';
-import NavBar from './NavBar';
+import { DrawerHeader } from "./utils";
+import ResponsiveDrawer from "./NavBar";
 
 const MainContainer = ({ children }) => {
   return (
-    <Box sx={{ display: 'flex' }}>
-      <NavBar />
-      <Box component='main' sx={{ flexGrow: 1, p: 3 }}>
+    <Box sx={{ display: "flex" }}>
+      <ResponsiveDrawer />
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {children}
       </Box>

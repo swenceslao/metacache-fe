@@ -171,7 +171,7 @@ const AxieTracker = () => {
         width: '100%',
       }}>
         <Box sx={{ 
-          border: 1, borderColor: 'secondary.main', borderRadius: 2,
+          border: 1, borderColor: 'primary.main', borderRadius: 2,
           py: 1, px: 2, my: 0.5, 
           width: 'fit-content',
           display: 'flex', flexFlow: 'column nowrap', 
@@ -183,7 +183,7 @@ const AxieTracker = () => {
         }}>
           <Box sx={{ 
             display: 'flex', alignItems: 'center', 
-            borderBottom: 1, borderColor: 'secondary.light',
+            borderBottom: 1, borderColor: 'primary.light',
             mb: 1, pb: 0.5,
           }}>
             <img src={SLPImage} alt='SLP' style={{ maxWidth: 24, maxHeight: 24, paddingRight: 6 }} />
@@ -234,10 +234,20 @@ const AxieTracker = () => {
         }
         <GridContainer>
           {!mobileOnly &&
-            <TotalSLPCard 
-              referenceTime={dateComparisonMapping.useToday[0]} 
-              comparisonTime={dateComparisonMapping.useToday[1]} 
-            />
+            <>
+              <TotalSLPCard 
+                referenceTime={dateComparisonMapping.useToday[0]} 
+                comparisonTime={dateComparisonMapping.useToday[1]} 
+              />
+              <TotalSLPCard 
+                referenceTime={dateComparisonMapping.useToday[0]} 
+                comparisonTime={dateComparisonMapping.useToday[1]} 
+              />
+              <TotalSLPCard 
+                referenceTime={dateComparisonMapping.useToday[0]} 
+                comparisonTime={dateComparisonMapping.useToday[1]} 
+              />
+            </>
           }
           <SecondaryGridCard id='top-scholars-slp'>
             <Box sx={{ 

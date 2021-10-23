@@ -1,93 +1,35 @@
-import React, { useState, useEffect, useMemo, forwardRef } from 'react';
-import PropTypes from 'prop-types';
-import { Link as RouterLink, withRouter } from 'react-router-dom';
-import { styled, useTheme } from '@mui/material/styles';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import DashboardTwoToneIcon from '@mui/icons-material/DashboardTwoTone';
-import TrendingUpTwoToneIcon from '@mui/icons-material/TrendingUpTwoTone';
-import SettingsApplicationsTwoToneIcon from '@mui/icons-material/SettingsApplicationsTwoTone';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ExpandLessTwoToneIcon from '@mui/icons-material/ExpandLessTwoTone';
-import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Collapse from '@mui/material/Collapse';
-import Image from 'mui-image';
+import React, { useState, useEffect, useMemo, forwardRef } from "react";
+import PropTypes from "prop-types";
+import { Link as RouterLink, withRouter } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import MenuIcon from "@mui/icons-material/Menu";
+import DashboardTwoToneIcon from "@mui/icons-material/DashboardTwoTone";
+import TrendingUpTwoToneIcon from "@mui/icons-material/TrendingUpTwoTone";
+import SettingsApplicationsTwoToneIcon from "@mui/icons-material/SettingsApplicationsTwoTone";
+import ExpandLessTwoToneIcon from "@mui/icons-material/ExpandLessTwoTone";
+import ExpandMoreTwoToneIcon from "@mui/icons-material/ExpandMoreTwoTone";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Image from "mui-image";
+import Collapse from "@mui/material/Collapse";
 
-import '../../assets/App.css';
-import { DrawerHeader, routeMapping } from './utils';
-import AxieLogo from '../../assets/icons/AxieInfinityFullLogo.webp';
-import MetaCacheLogoForLight from '../../assets/brand/metacache_horizontal_color.png';
-import MetaCacheLogoForDark from '../../assets/brand/metacache_horizontal_white.png';
-
-// Source: https://mui.com/components/drawers/
+import "../../assets/App.css";
+import { DrawerHeader, routeMapping } from "./utils";
+import AxieLogo from "../../assets/icons/AxieInfinityFullLogo.webp";
+import MetaCacheLogoForLight from "../../assets/brand/metacache_horizontal_color.png";
+import MetaCacheLogoForDark from "../../assets/brand/metacache_horizontal_white.png";
 
 const drawerWidth = 240;
-
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(9)} + 1px)`,
-  },
-});
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    ...(open && {
-      ...openedMixin(theme),
-      '& .MuiDrawer-paper': openedMixin(theme),
-    }),
-    ...(!open && {
-      ...closedMixin(theme),
-      '& .MuiDrawer-paper': closedMixin(theme),
-    }),
-  }),
-);
 
 const ListItemLink = (props) => {
   const { icon, primary, to } = props;
@@ -97,7 +39,7 @@ const ListItemLink = (props) => {
       forwardRef(function Link(itemProps, ref) {
         return <RouterLink to={to} ref={ref} {...itemProps} role={undefined} />;
       }),
-    [to],
+    [to]
   );
 
   return (
@@ -108,17 +50,18 @@ const ListItemLink = (props) => {
       </ListItem>
     </li>
   );
-}
+};
 
-const NavBar = withRouter(props => {
-  const { location } = props;
+const ResponsiveDrawer = withRouter((props) => {
+  const { window, location } = props;
   const theme = useTheme();
   const { palette } = theme;
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const [trackerSubHeaderOpen, setTrackerSubHeaderOpen] = useState(false);
 
   const handleDrawerToggle = () => {
-    setOpen(!open);
+    setMobileOpen(!mobileOpen);
   };
 
   const handleTrackerExpandToggle = () => {
@@ -126,90 +69,147 @@ const NavBar = withRouter(props => {
   };
 
   const navBarTitle = () => {
-    const mapping = routeMapping.find(route => location.pathname.includes(Object.keys(route)[0])) || { '/': 'MetaCache'};
+    const mapping = routeMapping.find((route) =>
+      location.pathname.includes(Object.keys(route)[0])
+    ) || { "/": "MetaCache" };
     return mapping[Object.keys(mapping)[0]];
   };
 
   useEffect(() => {
-    if (location.pathname.includes('trackers')) {
+    if (location.pathname.includes("trackers")) {
       setTrackerSubHeaderOpen(true);
     }
   }, [location]);
 
+  const drawer = (
+    <div>
+      <DrawerHeader>
+        <Image
+          src={
+            palette.mode === "light"
+              ? MetaCacheLogoForLight
+              : MetaCacheLogoForDark
+          }
+          alt="MetaCache"
+          width="180"
+        />
+      </DrawerHeader>
+      <Divider />
+      <List>
+        <ListItemLink
+          to="/dashboard"
+          primary="Dashboard"
+          icon={<DashboardTwoToneIcon />}
+          selected={location.pathname.includes("dashboard")}
+          onClick={handleDrawerToggle}
+        />
+        <ListItem button onClick={handleTrackerExpandToggle}>
+          <ListItemIcon>
+            <TrendingUpTwoToneIcon />
+          </ListItemIcon>
+          <ListItemText primary={"Trackers"} />
+          {trackerSubHeaderOpen ? (
+            <ExpandLessTwoToneIcon />
+          ) : (
+            <ExpandMoreTwoToneIcon />
+          )}
+        </ListItem>
+        <Collapse in={trackerSubHeaderOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemLink
+              sx={{ pl: 4 }}
+              to="/trackers/axieinfinity"
+              primary="Axie Infinity"
+              icon={<img src={AxieLogo} alt="Axie Infinity" width="40" />}
+              selected={location.pathname.includes("axie")}
+              onClick={handleDrawerToggle}
+            />
+          </List>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItem button>
+          <ListItemIcon>
+            <SettingsApplicationsTwoToneIcon />
+          </ListItemIcon>
+          <ListItemText primary={"Settings"} />
+        </ListItem>
+      </List>
+    </div>
+  );
+
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
+
   return (
-    <>
-      <AppBar position='fixed' open={open}>
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+        }}
+      >
         <Toolbar>
           <IconButton
-            color='inherit'
-            aria-label='open drawer'
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
             onClick={handleDrawerToggle}
-            edge='start'
-            sx={{
-              marginRight: '36px',
-              ...(open && { display: 'none' }),
-            }}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant='h6' noWrap component='strong'>
+          <Typography variant="h6" noWrap component="div">
             {navBarTitle()}
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer variant='permanent' open={open}>
-        <DrawerHeader>
-          <Image 
-            src={palette.mode === 'light' ? MetaCacheLogoForLight : MetaCacheLogoForDark} 
-            alt='MetaCache' 
-            width='180'
-          />
-          <IconButton onClick={handleDrawerToggle}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <List>
-          <ListItemLink 
-            to='/dashboard' primary='Dashboard' 
-            icon={<DashboardTwoToneIcon />} 
-            selected={location.pathname.includes('dashboard')}
-          />
-          <ListItem button onClick={handleTrackerExpandToggle}>
-            <ListItemIcon>
-              <TrendingUpTwoToneIcon/>
-            </ListItemIcon>
-            <ListItemText primary={'Trackers'} />
-            {trackerSubHeaderOpen ? <ExpandLessTwoToneIcon /> : <ExpandMoreTwoToneIcon />}
-          </ListItem>
-          <Collapse in={trackerSubHeaderOpen} timeout='auto' unmountOnExit>
-            <List component='div' disablePadding>
-              <ListItemLink 
-                sx={{ pl: 4 }} 
-                to='/trackers/axieinfinity' primary='Axie Infinity' 
-                icon={<img src={AxieLogo} alt='Axie Infinity' width='40' />} 
-                selected={location.pathname.includes('axie')}
-              />
-            </List>
-          </Collapse>
-        </List>
-        <Divider />
-        <List>
-          <ListItem button>
-            <ListItemIcon>
-              <SettingsApplicationsTwoToneIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Settings'} />
-          </ListItem>
-        </List>
-      </Drawer>
-    </>
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+      >
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Drawer
+          container={container}
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+    </Box>
   );
 });
 
-ListItemLink.propTypes = {
-  icon: PropTypes.element,
-  primary: PropTypes.string.isRequired,
-  to: PropTypes.string.isRequired,
+ResponsiveDrawer.propTypes = {
+  window: PropTypes.func,
 };
 
-export default NavBar;
+export default ResponsiveDrawer;
