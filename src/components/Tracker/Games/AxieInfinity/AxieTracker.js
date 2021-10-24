@@ -3,6 +3,7 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { DefinedRange, defaultStaticRanges } from 'react-date-range';
 import { Bar } from 'react-chartjs-2';
+import InnerHTML from 'dangerously-set-html-content';
 import axios from 'axios';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -22,10 +23,9 @@ import { useTheme } from '@mui/material/styles';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import SLPImage from '../../../../assets/icons/SLP.png';
-import ETHImage from '../../../../assets/icons/eth-diamond-purple.png';
 import GridContainer from '../../Common/GridContainer';
 import { SLPCard, ScholarsTable } from './index';
-import { SecondaryGridCard, SwipeableCards } from '../../Common/index';
+import { SecondaryGridCard, SwipeableCards, useScript } from '../../Common/index';
 import { lineChartOptions } from '../../Common/ChartOptions';
 
 const topScholarsData = {
@@ -77,6 +77,7 @@ const currencies = [
 const AxieTracker = () => {
   const theme = useTheme();
   const mobileOnly = useMediaQuery(theme.breakpoints.down('sm'));
+  const { palette } = theme;
   const [data, setData] = useState({});
   const [totalSLPData, setTotalSLPData] = useState({
     cardTitle: 'Total SLP',
@@ -210,52 +211,35 @@ const AxieTracker = () => {
     getData();
   }, [getData]);
 
+  const scriptStatus = useScript('https://widgets.coingecko.com/coingecko-coin-price-marquee-widget.js');
+  const priceTickerLight = `
+    <div>
+      <coingecko-coin-price-marquee-widget coin-ids="ethereum,axie-infinity,smooth-love-potion" currency="usd" background-color="#ffffff" locale="en"></coingecko-coin-price-marquee-widget>          
+    </div>
+  `;
+  const priceTickerDark = `
+    <div>
+      <coingecko-coin-price-marquee-widget coin-ids="ethereum,axie-infinity,smooth-love-potion" currency="usd" background-color="#121212" locale="en" font-color="#F2F2F2"></coingecko-coin-price-marquee-widget>
+    </div>
+  `;
+
   return (
     <>
       {renderModalDatePicker()}
       <Box sx={{ 
-        mb: 4, 
+        mb: 0, 
         display: 'flex', flexFlow: 'row wrap', 
         alignItems: 'center', 
         justifyContent: 'center',
-        width: '100%',
       }}>
-        <Box sx={{ 
-          border: 1, borderColor: 'primary.main', borderRadius: 2,
-          py: 1, px: 2, my: 0.5, 
-          width: 'fit-content',
-          display: 'flex', flexFlow: 'column nowrap', 
-          alignItems: 'center',
-          m: {
-            xs: '1rem auto 0',
-            sm: '0',
-          },
-        }}>
+        {scriptStatus === "ready" && (
           <Box sx={{ 
-            display: 'flex', alignItems: 'center', 
-            borderBottom: 1, borderColor: 'primary.light',
-            mb: 1, pb: 0.5,
+            width: '85vw',
           }}>
-            <img src={SLPImage} alt='SLP' style={{ maxWidth: 24, maxHeight: 24, paddingRight: 6 }} />
-            <Typography variant='h6'>
-              1 SLP
-            </Typography>
-            <Typography variant='h6' mx={1}>
-              &asymp;
-            </Typography>
-            <Typography variant='h6'>
-              4,241.88 USD
-            </Typography>
+            <InnerHTML html={palette.mode === 'light' ? priceTickerLight : priceTickerDark} />
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', }}>
-          <img src={ETHImage} alt='ETH' style={{ maxWidth: 16, maxHeight: 16, paddingRight: 2 }} />
-            <Typography variant='subtitle2' mx={1}>
-              1 ETH &asymp; 3,812.71 USD
-            </Typography>
-          </Box>
-        </Box>
+        )}
       </Box>
-      <Divider />
       <Box my={4} width='100%'>
         <Box display='flex' alignItems='center' justifyContent='space-between' mb={4}>
           <Box>
@@ -271,18 +255,18 @@ const AxieTracker = () => {
             <SLPCard
               cardTitle={totalSLPData.cardTitle}
               cardTotalValue={totalSLPData.cardTotalValue} 
-              referenceTime={dateComparisonMapping.useToday[0]} 
-              comparisonTime={dateComparisonMapping.useToday[1]} 
+              referenceTime={buttonSelectedTimeframe[0]} 
+              comparisonTime={buttonSelectedTimeframe[1]} 
             />
             <SLPCard
               cardTitle="Manager SLP" 
-              referenceTime={dateComparisonMapping.useToday[0]} 
-              comparisonTime={dateComparisonMapping.useToday[1]} 
+              referenceTime={buttonSelectedTimeframe[0]} 
+              comparisonTime={buttonSelectedTimeframe[1]} 
             />
             <SLPCard
               cardTitle="Scholars SLP" 
-              referenceTime={dateComparisonMapping.useToday[0]} 
-              comparisonTime={dateComparisonMapping.useToday[1]} 
+              referenceTime={buttonSelectedTimeframe[0]} 
+              comparisonTime={buttonSelectedTimeframe[1]} 
             />
           </SwipeableCards>
         }
@@ -292,18 +276,18 @@ const AxieTracker = () => {
               <SLPCard
                 cardTitle={totalSLPData.cardTitle}
                 cardTotalValue={totalSLPData.cardTotalValue} 
-                referenceTime={dateComparisonMapping.useToday[0]} 
-                comparisonTime={dateComparisonMapping.useToday[1]} 
+                referenceTime={buttonSelectedTimeframe[0]} 
+                comparisonTime={buttonSelectedTimeframe[1]} 
               />
               <SLPCard
                 cardTitle="Manager SLP" 
-                referenceTime={dateComparisonMapping.useToday[0]} 
-                comparisonTime={dateComparisonMapping.useToday[1]} 
+                referenceTime={buttonSelectedTimeframe[0]} 
+                comparisonTime={buttonSelectedTimeframe[1]} 
               />
               <SLPCard
                 cardTitle="Scholars SLP" 
-                referenceTime={dateComparisonMapping.useToday[0]} 
-                comparisonTime={dateComparisonMapping.useToday[1]} 
+                referenceTime={buttonSelectedTimeframe[0]} 
+                comparisonTime={buttonSelectedTimeframe[1]} 
               />
             </>
           }

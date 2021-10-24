@@ -147,6 +147,7 @@ const ResponsiveDrawer = withRouter((props) => {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
+        enableColorOnDark
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
