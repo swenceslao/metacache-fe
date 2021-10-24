@@ -92,6 +92,7 @@ const ResponsiveDrawer = withRouter((props) => {
           }
           alt="MetaCache"
           width="180"
+          duration={500}
         />
       </DrawerHeader>
       <Divider />

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { DefinedRange, defaultStaticRanges } from 'react-date-range';
 import { Bar } from 'react-chartjs-2';
+import axios from 'axios';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -18,11 +19,12 @@ import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import SLPImage from '../../../../assets/icons/SLP.png';
 import ETHImage from '../../../../assets/icons/eth-diamond-purple.png';
 import GridContainer from '../../Common/GridContainer';
-import { TotalSLPCard, ScholarsTable } from './index';
+import { SLPCard, ScholarsTable } from './index';
 import { SecondaryGridCard, SwipeableCards } from '../../Common/index';
 import { lineChartOptions } from '../../Common/ChartOptions';
 
@@ -75,6 +77,12 @@ const currencies = [
 const AxieTracker = () => {
   const theme = useTheme();
   const mobileOnly = useMediaQuery(theme.breakpoints.down('sm'));
+  const [data, setData] = useState({});
+  const [totalSLPData, setTotalSLPData] = useState({
+    cardTitle: 'Total SLP',
+    cardTotalValue: 0,
+  });
+  const [tableLoading, setTableLoading] = useState(0);
   const [showDatepicker, setShowDatepicker] = useState(false);
   const [buttonSelectedTimeframe, setButtonSelectedTimeframe] = useState(dateComparisonMapping.useToday);
   const [currencySelected, setCurrencySelected] = useState(currencies[1].longHand);
@@ -100,6 +108,44 @@ const AxieTracker = () => {
 
   const toggleDatePicker = () => {
     setShowDatepicker(!showDatepicker);
+  };
+
+  const columns = [
+    { field: 'date', headerName: 'Date', },
+    { field: 'ronin_slp', headerName: 'Ronin SLP', valueFormatter: 'x.toLocaleString("en")', },
+    { field: 'in_game_slp', headerName: 'In-game SLP', valueFormatter: 'x.toLocaleString("en")', },
+    { field: 'overall_claimed_slp', headerName: 'Claimed SLP', valueFormatter: 'x.toLocaleString("en")', },
+    { field: 'total_slp', headerName: 'Total SLP', valueFormatter: 'x.toLocaleString("en")', },
+    { field: 'rank', headerName: 'In-game Rank', valueFormatter: '"# " + x.toLocaleString("en")', },
+    { field: 'mmr', headerName: 'Current MMR', valueFormatter: 'x.toLocaleString("en")', },
+    { field: 'wins', headerName: 'Wins today', valueFormatter: 'x.toLocaleString("en")', },
+    { field: 'losses', headerName: 'Losses today', valueFormatter: 'x.toLocaleString("en")', },
+    { field: 'draws', headerName: 'Draws today', valueFormatter: 'x.toLocaleString("en")', },
+  ];
+
+  const getData = useCallback(async () => {
+    try {
+      const res = await axios.get('https://api.metacache.app/data/0xac26560d9788f7863b704493125d419246d59cb6/historical', {
+        onDownloadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setTableLoading(percentCompleted);
+        }
+      });
+      console.log(res);
+      setData(res);
+      const { total_slp } = addTotalSLP('total_slp',res.data.daily_data);
+      setTotalSLPData({ ...totalSLPData, cardTotalValue: total_slp });
+    } catch (error) {
+      console.error(error);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const addTotalSLP = (key, data) => {
+    const sum = data.reduce((acc, curr) => ({
+      total_slp: acc[key] + curr[key]
+    }));
+    return sum;
   };
 
   const renderCurrencyPicker = () => {
@@ -160,6 +206,10 @@ const AxieTracker = () => {
     );
   };
 
+  useEffect(() => {
+    getData();
+  }, [getData]);
+
   return (
     <>
       {renderModalDatePicker()}
@@ -218,15 +268,19 @@ const AxieTracker = () => {
         </Box>
         {mobileOnly && 
           <SwipeableCards>
-            <TotalSLPCard 
+            <SLPCard
+              cardTitle={totalSLPData.cardTitle}
+              cardTotalValue={totalSLPData.cardTotalValue} 
               referenceTime={dateComparisonMapping.useToday[0]} 
               comparisonTime={dateComparisonMapping.useToday[1]} 
             />
-            <TotalSLPCard 
+            <SLPCard
+              cardTitle="Manager SLP" 
               referenceTime={dateComparisonMapping.useToday[0]} 
               comparisonTime={dateComparisonMapping.useToday[1]} 
             />
-            <TotalSLPCard 
+            <SLPCard
+              cardTitle="Scholars SLP" 
               referenceTime={dateComparisonMapping.useToday[0]} 
               comparisonTime={dateComparisonMapping.useToday[1]} 
             />
@@ -235,15 +289,19 @@ const AxieTracker = () => {
         <GridContainer>
           {!mobileOnly &&
             <>
-              <TotalSLPCard 
+              <SLPCard
+                cardTitle={totalSLPData.cardTitle}
+                cardTotalValue={totalSLPData.cardTotalValue} 
                 referenceTime={dateComparisonMapping.useToday[0]} 
                 comparisonTime={dateComparisonMapping.useToday[1]} 
               />
-              <TotalSLPCard 
+              <SLPCard
+                cardTitle="Manager SLP" 
                 referenceTime={dateComparisonMapping.useToday[0]} 
                 comparisonTime={dateComparisonMapping.useToday[1]} 
               />
-              <TotalSLPCard 
+              <SLPCard
+                cardTitle="Scholars SLP" 
                 referenceTime={dateComparisonMapping.useToday[0]} 
                 comparisonTime={dateComparisonMapping.useToday[1]} 
               />
@@ -287,7 +345,19 @@ const AxieTracker = () => {
         <Box display='flex' alignItems='center' justifyContent='space-between' mb={4}>
           {renderSectionTitle('Scholars')}
         </Box>
-        <ScholarsTable />
+        {tableLoading < 100 ? 
+          <Box sx={{
+            width: '50%',
+            maxWidth: 800,
+            mx: 'auto',
+            my: 4,
+          }}>
+            <LinearProgress /> 
+          </Box>
+          : 
+          <ScholarsTable columns={columns} rows={data} />
+        }
+        
       </Box>
     </>
   );

@@ -1,7 +1,7 @@
 import AxieTracker from './AxieTracker';
-import TotalSLPCard from './TotalSLPCard';
+import SLPCard from './SLPCard';
 import ScholarsTable from './ScholarsTable';
 
-export { TotalSLPCard, ScholarsTable };
+export { SLPCard, ScholarsTable };
 export default AxieTracker;
 

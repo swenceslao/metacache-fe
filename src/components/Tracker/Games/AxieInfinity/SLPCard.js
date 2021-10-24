@@ -12,7 +12,7 @@ import { PrimaryGridCard } from '../../Common/index';
 import { lineChartOptions } from '../../Common/ChartOptions';
 
 
-const TotalSLPCard = ({ referenceTime, comparisonTime }) => {
+const SLPCard = ({ cardTitle, cardData, cardTotalValue, referenceTime, comparisonTime }) => {
   const theme = useTheme();
   const { palette } = theme;
 
@@ -44,7 +44,7 @@ const TotalSLPCard = ({ referenceTime, comparisonTime }) => {
       }}>
         <Box sx={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'flex-start', }}>
           <Typography variant='h6' component='h6'>
-            Total SLP
+            {cardTitle}
           </Typography>
           <Typography variant='caption' component='p'>
             {referenceTime}
@@ -54,7 +54,7 @@ const TotalSLPCard = ({ referenceTime, comparisonTime }) => {
           <Box sx={{ display: 'flex', alignItems: 'center', }}>
             <img src={SLPImage} alt='SLP' style={{ maxWidth: 28, maxHeight: 28, paddingRight: 8 }} />
             <Typography variant='h6' fontWeight='bold'>
-              2,340 SLP
+              {Number(cardTotalValue).toLocaleString('en')} SLP
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', }}>
@@ -86,9 +86,17 @@ const TotalSLPCard = ({ referenceTime, comparisonTime }) => {
   );
 };
 
-TotalSLPCard.propTypes = {
+SLPCard.defaultProps = {
+  cardData: {},
+  cardTotalValue: 1000
+}
+
+SLPCard.propTypes = {
+  cardTitle: PropTypes.string.isRequired,
+  cardData: PropTypes.object,
+  cardTotalValue: PropTypes.number,
   referenceTime: PropTypes.string.isRequired,
   comparisonTime: PropTypes.string.isRequired,
 };
 
-export default TotalSLPCard;
+export default SLPCard;
